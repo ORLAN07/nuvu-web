@@ -1,3 +1,9 @@
 table {
   width: 100%;
 }
+.title {
+  padding: 5%;
+}
+.top {
+  margin-top: 10%;
+}

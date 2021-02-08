@@ -5,6 +5,7 @@ export class CardModel {
   idCard: number;
   brand: string;
   isCredit: boolean;
+  dateDue: Date;
   cardLevel: CardLevelModel;
   securityCode: string;
   city: CityModel;

@@ -1,0 +1,70 @@
+<div class="create">
+  <span>Crear cliente</span>
+  <form [formGroup]="clientFormGroup">
+    <br>
+    <label for="name1">Nombre1:</label><br>
+    <input type="text" id="name1" formControlName="name1"><br>
+
+    <label for="name2">Nombre2:</label><br>
+    <input type="text" id="name2" formControlName="name2"><br>
+
+    <label for="surname1">Apellido1:</label><br>
+    <input type="text" id="surname1" formControlName="surname1"><br>
+
+    <label for="surname2">Apellido2:</label><br>
+    <input type="text" id="surname2" formControlName="surname2"><br>
+
+    <label for="year">Edad:</label><br>
+    <input type="text" id="year" formControlName="year"><br>
+
+    <label for="phone">Telefono:</label><br>
+    <input type="text" id="phone" formControlName="phone"><br>
+
+    <label for="email">Correo:</label><br>
+    <input type="text" id="email" formControlName="email"><br>
+
+    <button mat-button color="primary" (click)="onAddCard()">Agregar tarjeta</button>
+    <br>
+    <div *ngIf="isAddCard">
+      <mat-form-field class="example-chip-list">
+        <mat-label>Agregar Card</mat-label>
+        <br>
+        <mat-chip-list #chipList aria-label="Fruit selection">
+          <mat-chip
+            *ngFor="let card of cards"
+            (removed)="remove(card)">
+            {{card.isCredit}}
+            <mat-icon matChipRemove>cancel</mat-icon>
+          </mat-chip>
+          <form [formGroup]="cardFormGroup">
+            <br>
+            <label for="brand">Marca:</label><br>
+            <input type="text" id="brand" formControlName="brand"><br>
+
+            <label for="credit">Tipo:</label><br>
+            <input type="text" id="credit" formControlName="isCredit"><br>
+
+            <label for="level">Nivel:</label><br>
+            <input type="text" id="level" formControlName="cardLevel"><br>
+
+            <label for="scode">Codigo de seguridad:</label><br>
+            <input type="text" id="scode" formControlName="securityCode"><br>
+
+            <label for="dateDue">Fecha de vencimiento:</label><br>
+            <input type="text" id="dateDue" formControlName="dateDue"><br>
+
+            <label for="city">Ciudad:</label><br>
+            <input type="text" id="city" formControlName="city"><br>
+
+            <label for="price">Price:</label><br>
+            <input type="text" id="price" formControlName="price"><br>
+            <button (click)="add()">Agregar</button>
+          </form>
+        </mat-chip-list>
+      </mat-form-field>
+    </div>
+
+    <button (click)="onCreate()">Crear</button>
+  </form>
+
+</div>

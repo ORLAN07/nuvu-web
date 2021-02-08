@@ -13,6 +13,10 @@ export class ClientService {
   constructor(private httpClient: HttpClient) {
   }
 
+  getAll(): Observable<ClientModel[]> {
+    return this.httpClient.get<ClientModel[]>(this.url + '/getAll');
+  }
+
   get(idClient: number): Observable<ClientModel> {
     return this.httpClient.get<ClientModel>(this.url + '/' + idClient);
   }
