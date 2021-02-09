@@ -1,0 +1,17 @@
+<div class="form-login">
+  <h1>Inicio de sesion</h1>
+  <form [formGroup]="loginFormGroup">
+    <div class="form-group">
+      <label for="inputEmail">Usuario</label>
+      <input type="email" class="form-control" id="inputEmail" placeholder="nombre de usuario" formControlName="userName">
+    </div>
+    <div class="form-group">
+      <label for="inputPassword">Contraseña</label>
+      <input type="password" class="form-control" id="inputPassword" placeholder="contraseña" formControlName="password">
+    </div>
+    <button type="submit" class="btn btn-primary" (click)="onLogin()">Iniciar sesion</button>
+    <button type="submit" class="btn btn-primary" (click)="onRegister()">Registrarse</button>
+  </form>
+</div>
+
+

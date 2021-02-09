@@ -7,7 +7,7 @@ import {AppRoutingModule} from './app-routing.module';
 import {ClientComponent} from './modules/client/components/client/client.component';
 import {MatTableModule} from '@angular/material/table';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {MatIconModule} from '@angular/material/icon';
 import { CreateClientComponent } from './modules/client/components/create-client/create-client.component';
 import {MatDialogModule} from '@angular/material/dialog';
@@ -15,12 +15,15 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatButtonModule} from '@angular/material/button';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatChipsModule} from '@angular/material/chips';
+import { LoginComponent } from './modules/login/components/login/login.component';
+import {AuthInterceptorService} from './share/auth-interceptor.service';
 
 @NgModule({
   declarations: [
     AppComponent,
     ClientComponent,
-    CreateClientComponent
+    CreateClientComponent,
+    LoginComponent
   ],
   imports: [
     HttpClientModule,
@@ -37,7 +40,13 @@ import {MatChipsModule} from '@angular/material/chips';
     MatFormFieldModule,
     MatChipsModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptorService,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {
