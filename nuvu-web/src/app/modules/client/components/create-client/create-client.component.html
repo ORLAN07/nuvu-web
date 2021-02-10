@@ -40,7 +40,7 @@
         <h4>Pais</h4>
         <mat-form-field appearance="fill">
           <mat-label>Pais</mat-label>
-          <mat-select (selectionChange)="onSelectChangeCountry(1, $event.value)">
+          <mat-select (selectionChange)="onSelectChangeCountry(1, $event.value)" formControlName="country">
             <mat-option *ngFor="let item of countries" [value]="item.code">
               {{item.name}}
             </mat-option>

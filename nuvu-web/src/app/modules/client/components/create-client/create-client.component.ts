@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ClientService} from '../../../../domains/client/services/client.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ClientModel} from '../../../../domains/client/model/client.model';
@@ -13,6 +13,7 @@ import {CardBrandService} from '../../../../domains/card/service/Card-brand.serv
 import {CardLevelService} from '../../../../domains/card/service/card-level.service';
 import {CountryService} from '../../../../domains/country/service/country.service';
 import {CountryModel} from '../../../../domains/country/model/country-model';
+import {MatDialogRef} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-create-client',
@@ -35,7 +36,9 @@ export class CreateClientComponent implements OnInit {
               private cityService: CityService,
               private cardBrandService: CardBrandService,
               private cardLevelService: CardLevelService,
-              private countryService: CountryService) { }
+              private countryService: CountryService,
+              private dialog: MatDialogRef<CreateClientComponent>) {
+  }
 
   clientFormGroup: FormGroup = this.formBuilder.group({
     name1: [, Validators.required],
@@ -45,7 +48,8 @@ export class CreateClientComponent implements OnInit {
     year: [, Validators.required],
     phone: [, Validators.required],
     email: [, Validators.required],
-    city: [, Validators.required]
+    city: [, Validators.required],
+    country: [, Validators.required]
   });
   cardFormGroup: FormGroup = this.formBuilder.group(
     {
@@ -143,9 +147,14 @@ export class CreateClientComponent implements OnInit {
 
   onCreate(): void {
     console.log('name1>>', this.clientFormGroup.get('name1'));
-    this.cards
+    if (this.cardFormGroup.valid) {
+      this.add();
+    }
     this.clientService.create(this.buildObjectClient()).subscribe(
       (client: ClientModel) => {
+        if (client !== null && client !== undefined) {
+          this.dialog.close();
+        }
         console.log('clientCreated>>', client);
       }
     );
@@ -163,12 +172,19 @@ export class CreateClientComponent implements OnInit {
 
   buildObjectCard(): CardModel {
     const card: CardModel = new CardModel();
-    card.brand = this.cardFormGroup.get('brand').value;
-    card.isCredit = this.cardFormGroup.get('isCredit').value;
-    card.cardLevel = this.cardFormGroup.get('cardLevel').value;
+    card.brand = new CardBrandModel();
+    card.brand.idCardBrand = this.cardFormGroup.get('brand').value;
+    card.isCredit = this.cardFormGroup.get('isCredit').value === 'Credito' ? true : false;
+    card.cardLevel = new CardLevelModel();
+    card.cardLevel.idCardLevel = this.cardFormGroup.get('cardLevel').value;
     card.dateDue = this.cardFormGroup.get('dateDue').value;
     card.securityCode = this.cardFormGroup.get('securityCode').value;
-    card.city = this.cardFormGroup.get('city').value;
+    const city: CityModel = new CityModel();
+    const country: CountryModel = new CountryModel();
+    country.code = this.clientFormGroup.get('country').value;
+    city.country = country;
+    city.idCity = this.clientFormGroup.get('city').value;
+    card.city = city;
     card.country = this.cardFormGroup.get('country').value;
     card.price = this.cardFormGroup.get('price').value;
     return card;
@@ -183,7 +199,12 @@ export class CreateClientComponent implements OnInit {
     client.year = this.clientFormGroup.get('year').value;
     client.phone = this.clientFormGroup.get('phone').value;
     client.email = this.clientFormGroup.get('email').value;
-    client.city = this.clientFormGroup.get('city').value;
+    const city: CityModel = new CityModel();
+    const country: CountryModel = new CountryModel();
+    country.code = this.clientFormGroup.get('country').value;
+    city.country = country;
+    city.idCity = this.clientFormGroup.get('city').value;
+    client.city = city;
     client.cards = this.cards;
     return client;
   }

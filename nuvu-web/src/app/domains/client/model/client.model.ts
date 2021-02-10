@@ -12,4 +12,7 @@ export class ClientModel {
   email: string;
   city: CityModel;
   cards: CardModel[];
+
+  constructor() {
+  }
 }
