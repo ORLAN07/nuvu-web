@@ -3,6 +3,7 @@ import {ClientService} from '../../../../domains/client/services/client.service'
 import {ClientModel} from '../../../../domains/client/model/client.model';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {CreateClientComponent} from '../create-client/create-client.component';
+import {ClientDialogComponent} from '../client-dialog/client-dialog.component';
 
 @Component({
   selector: 'app-client',
@@ -46,6 +47,17 @@ export class ClientComponent implements OnInit {
 
   onCreate(): void {
     const dialogCreateClient: MatDialogRef<CreateClientComponent> = this.matDialog.open(CreateClientComponent);
+  }
+
+  onDelete(client: ClientModel): void {
+    this.clients = this.clients.filter((clientModel: ClientModel) => clientModel.idClient !== client.idClient);
+    this.clientService.delete(client.idClient).subscribe(
+      (isDelete: boolean) => {
+        if (isDelete) {
+          const dialogRef: MatDialogRef<ClientDialogComponent> = this.matDialog.open(ClientDialogComponent);
+        }
+      }
+    );
   }
 
 }

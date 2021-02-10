@@ -1,4 +1,5 @@
 import {CardModel} from '../../card/model/card.model';
+import {CityModel} from '../../city/model/city-model';
 
 export class ClientModel {
   idClient: number;
@@ -9,5 +10,6 @@ export class ClientModel {
   year: number;
   phone: string;
   email: string;
+  city: CityModel;
   cards: CardModel[];
 }

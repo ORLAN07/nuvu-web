@@ -17,13 +17,20 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatChipsModule} from '@angular/material/chips';
 import { LoginComponent } from './modules/login/components/login/login.component';
 import {AuthInterceptorService} from './share/auth-interceptor.service';
+import { LoginDialogComponent } from './modules/login/components/login-dialog/login-dialog.component';
+import {MatOptionModule} from '@angular/material/core';
+import {MatSelectModule} from '@angular/material/select';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import { ClientDialogComponent } from './modules/client/components/client-dialog/client-dialog.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ClientComponent,
     CreateClientComponent,
-    LoginComponent
+    LoginComponent,
+    LoginDialogComponent,
+    ClientDialogComponent
   ],
   imports: [
     HttpClientModule,
@@ -38,7 +45,10 @@ import {AuthInterceptorService} from './share/auth-interceptor.service';
     ReactiveFormsModule,
     MatButtonModule,
     MatFormFieldModule,
-    MatChipsModule
+    MatChipsModule,
+    MatOptionModule,
+    MatSelectModule,
+    MatDatepickerModule
   ],
   providers: [
     {

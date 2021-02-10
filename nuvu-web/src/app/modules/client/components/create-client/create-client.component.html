@@ -1,70 +1,157 @@
+<h1>Creacion de cliente</h1>
 <div class="create">
-  <span>Crear cliente</span>
-  <form [formGroup]="clientFormGroup">
-    <br>
-    <label for="name1">Nombre1:</label><br>
-    <input type="text" id="name1" formControlName="name1"><br>
-
-    <label for="name2">Nombre2:</label><br>
-    <input type="text" id="name2" formControlName="name2"><br>
-
-    <label for="surname1">Apellido1:</label><br>
-    <input type="text" id="surname1" formControlName="surname1"><br>
-
-    <label for="surname2">Apellido2:</label><br>
-    <input type="text" id="surname2" formControlName="surname2"><br>
-
-    <label for="year">Edad:</label><br>
-    <input type="text" id="year" formControlName="year"><br>
-
-    <label for="phone">Telefono:</label><br>
-    <input type="text" id="phone" formControlName="phone"><br>
-
-    <label for="email">Correo:</label><br>
-    <input type="text" id="email" formControlName="email"><br>
-
-    <button mat-button color="primary" (click)="onAddCard()">Agregar tarjeta</button>
-    <br>
-    <div *ngIf="isAddCard">
-      <mat-form-field class="example-chip-list">
-        <mat-label>Agregar Card</mat-label>
-        <br>
-        <mat-chip-list #chipList aria-label="Fruit selection">
-          <mat-chip
-            *ngFor="let card of cards"
-            (removed)="remove(card)">
-            {{card.isCredit}}
-            <mat-icon matChipRemove>cancel</mat-icon>
-          </mat-chip>
-          <form [formGroup]="cardFormGroup">
-            <br>
-            <label for="brand">Marca:</label><br>
-            <input type="text" id="brand" formControlName="brand"><br>
-
-            <label for="credit">Tipo:</label><br>
-            <input type="text" id="credit" formControlName="isCredit"><br>
-
-            <label for="level">Nivel:</label><br>
-            <input type="text" id="level" formControlName="cardLevel"><br>
-
-            <label for="scode">Codigo de seguridad:</label><br>
-            <input type="text" id="scode" formControlName="securityCode"><br>
-
-            <label for="dateDue">Fecha de vencimiento:</label><br>
-            <input type="text" id="dateDue" formControlName="dateDue"><br>
-
-            <label for="city">Ciudad:</label><br>
-            <input type="text" id="city" formControlName="city"><br>
-
-            <label for="price">Price:</label><br>
-            <input type="text" id="price" formControlName="price"><br>
-            <button (click)="add()">Agregar</button>
-          </form>
-        </mat-chip-list>
-      </mat-form-field>
+  <form class="form-client" [formGroup]="clientFormGroup">
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label for="name1">Primer nombre</label>
+        <input type="text" class="form-control" id="name1" formControlName="name1">
+      </div>
+      <div class="form-group col-md-6">
+        <label for="name2">segundo nombre</label>
+        <input type="text" class="form-control" id="name2" formControlName="name2">
+      </div>
     </div>
-
-    <button (click)="onCreate()">Crear</button>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label for="surname1">primer apellido</label>
+        <input type="text" class="form-control" id="surname1" formControlName="surname1">
+      </div>
+      <div class="form-group col-md-6">
+        <label for="surname2">segundo apellido</label>
+        <input type="text" class="form-control" id="surname2" formControlName="surname2">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label for="year">Edad</label>
+        <input type="text" class="form-control" id="year" formControlName="year">
+      </div>
+      <div class="form-group col-md-6">
+        <label for="phone">Telefono</label>
+        <input type="text" class="form-control" id="phone" formControlName="phone">
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="email">Correo electronico</label>
+      <input type="text" class="form-control" id="email" placeholder="@gmail.com" formControlName="email">
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <h4>Pais</h4>
+        <mat-form-field appearance="fill">
+          <mat-label>Pais</mat-label>
+          <mat-select (selectionChange)="onSelectChangeCountry(1, $event.value)">
+            <mat-option *ngFor="let item of countries" [value]="item.code">
+              {{item.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="form-group col-md-6">
+        <h4>Ciudad</h4>
+        <mat-form-field appearance="fill">
+          <mat-label>Ciudad</mat-label>
+          <mat-select (selectionChange)="onSelectCity(1, $event.value)" formControlName="city">
+            <mat-option *ngFor="let item of cities" [value]="item.idCity">
+              {{item.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+    <button mat-button color="primary" (click)="onAddCard()">Crear tarjeta</button>
+      <br>
+      <div *ngIf="isAddCard">
+        <mat-form-field class="example-chip-list">
+          <br>
+          <mat-chip-list #chipList aria-label="Fruit selection">
+            <mat-chip
+              *ngFor="let card of cards"
+              (removed)="remove(card)" (click)="selected(card)">
+              {{card.isCredit}}
+              <mat-icon matChipRemove>cancel</mat-icon>
+            </mat-chip>
+            <div [formGroup]="cardFormGroup">
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <h4>Marca</h4>
+                  <mat-form-field appearance="fill">
+                    <mat-label>Marca de la tarjeta</mat-label>
+                    <mat-select (selectionChange)="onSelectCardBrand($event.value)" formControlName="brand">
+                      <mat-option *ngFor="let item of cardBrands" [value]="item.idCardBrand">
+                        {{item.description}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="form-group col-md-6">
+                  <h4>Tipo</h4>
+                  <mat-form-field appearance="fill">
+                    <mat-label>Tipo de tarjeta</mat-label>
+                    <mat-select (selectionChange)="onSelectCardType($event.value)" formControlName="isCredit">
+                      <mat-option *ngFor="let item of cardType" [value]="item">
+                        {{item}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <h4>Nivel de tarjeta</h4>
+                  <mat-form-field appearance="fill">
+                    <mat-label>Nivel de tarjeta</mat-label>
+                    <mat-select (selectionChange)="onSelectCardLevel($event.value)" formControlName="cardLevel">
+                      <mat-option *ngFor="let item of cardLevels" [value]="item.idCardLevel">
+                        {{item.description}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="form-group col-md-6">
+                  <label for="dateDue">Fecha de vencimiento</label>
+                  <input type="date" class="form-control" id="dateDue" formControlName="dateDue">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <h4>Pais</h4>
+                  <mat-form-field appearance="fill">
+                    <mat-label>Pais</mat-label>
+                    <mat-select (selectionChange)="onSelectChangeCountry(0, $event.value)" formControlName="country">
+                      <mat-option *ngFor="let item of countries" [value]="item.code">
+                        {{item.name}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="form-group col-md-6">
+                  <h4>Ciudad</h4>
+                  <mat-form-field appearance="fill">
+                    <mat-label>Ciudad</mat-label>
+                    <mat-select (selectionChange)="onSelectCity(0, $event.value)" formControlName="city">
+                      <mat-option *ngFor="let item of citiesByCard" [value]="item.idCity">
+                        {{item.name}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="scode">Codigo</label>
+                  <input type="password" class="form-control" id="scode" formControlName="securityCode">
+                </div>
+                <div class="form-group col-md-6">
+                  <label for="price">Precio</label>
+                  <input type="text" class="form-control" id="price" formControlName="price">
+                </div>
+              </div>
+              <button mat-button color="primary" (click)="add()" [disabled]="!cardFormGroup.valid">Agregar</button>
+            </div>
+          </mat-chip-list>
+        </mat-form-field>
+      </div>
+    <button class="btn btn-primary" (click)="onCreate()" [disabled]="!clientFormGroup.valid">Crear</button>
   </form>
-
 </div>

@@ -3,6 +3,9 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {UserModel} from '../../../../domains/login/model/user.model';
 import {UserService} from '../../../../domains/login/services/user.service';
 import {ObjectUserSecurityModel} from '../../../../domains/login/model/object-user-security.model';
+import {Router} from '@angular/router';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {LoginDialogComponent} from '../login-dialog/login-dialog.component';
 
 @Component({
   selector: 'app-login',
@@ -12,7 +15,9 @@ import {ObjectUserSecurityModel} from '../../../../domains/login/model/object-us
 export class LoginComponent implements OnInit {
 
   constructor(private formBuilder: FormBuilder,
-              private userService: UserService) { }
+              private userService: UserService,
+              private router: Router,
+              public dialog: MatDialog) { }
 
   loginFormGroup: FormGroup = this.formBuilder.group({
     userName: [, Validators.required],
@@ -20,6 +25,14 @@ export class LoginComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    this.validateSession();
+  }
+
+  validateSession(): void {
+    const token = localStorage.getItem('token');
+    if (token === undefined) {
+      this.router.navigate(['/login']);
+    }
   }
 
   onLogin(): void {
@@ -30,6 +43,9 @@ export class LoginComponent implements OnInit {
       (userSecurityModel: ObjectUserSecurityModel) => {
         console.log('user>>', userSecurityModel);
         localStorage.setItem('token', userSecurityModel.token);
+        if (userSecurityModel.token !== undefined) {
+          this.router.navigate(['/client']);
+        }
       }
     );
   }
@@ -40,6 +56,11 @@ export class LoginComponent implements OnInit {
     user.password = this.loginFormGroup.get('password').value;
     this.userService.register(user).subscribe(
       (userResponse: UserModel) => {
+        if (userResponse === null || userResponse === undefined) {
+          const dialogRef: MatDialogRef<LoginDialogComponent> = this.dialog.open(LoginDialogComponent);
+        } else {
+
+        }
         console.log('user>>', userResponse);
       }
     );

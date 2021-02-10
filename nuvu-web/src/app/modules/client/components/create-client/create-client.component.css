@@ -3,3 +3,11 @@
   height: 100% !important;
   display: flex;
 }
+
+.example-chip-list {
+  width: 800px !important;
+}
+
+.form-client {
+  max-height: 900px;
+}
