@@ -1,5 +1,4 @@
 <div class="top">
-  <span class="title">Lista de clientes</span>
   <table mat-table [dataSource]="clients" class="mat-elevation-z8">
 
     <ng-container matColumnDef="name1">
@@ -46,7 +45,7 @@
       <th mat-header-cell *matHeaderCellDef> Opciones </th>
       <td mat-cell *matCellDef="let element">
         <mat-icon (click)="onDelete(element)">delete</mat-icon>
-        <mat-icon>edit</mat-icon>
+        <mat-icon (click)="onEdit(element)">edit</mat-icon>
       </td>
     </ng-container>
 

@@ -1,5 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import {MatDialogRef} from '@angular/material/dialog';
+import {Component, Inject, Injectable, OnInit} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+
+export interface DialogLoginData {
+  isLogin: boolean;
+}
 
 @Component({
   selector: 'app-login-dialog',
@@ -8,10 +12,13 @@ import {MatDialogRef} from '@angular/material/dialog';
 })
 export class LoginDialogComponent implements OnInit {
 
+  isLogin: boolean = false;
   constructor(
+    @Inject(MAT_DIALOG_DATA) public dialogData: DialogLoginData,
     public dialogRef: MatDialogRef<LoginDialogComponent>) {}
 
   ngOnInit(): void {
+    this.isLogin = this.dialogData.isLogin;
   }
 
   onClose(): void {

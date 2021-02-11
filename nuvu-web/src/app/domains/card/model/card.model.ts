@@ -6,11 +6,12 @@ import {CardBrandModel} from './card-brand.model';
 export class CardModel {
   idCard: number;
   brand: CardBrandModel;
-  isCredit: boolean;
+  credit: boolean;
+  isCreditDescription: string;
   dateDue: Date;
   cardLevel: CardLevelModel;
   securityCode: string;
   city: CityModel;
-  country?: CountryModel;
+  country?: string;
   price: number;
 }

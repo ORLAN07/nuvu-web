@@ -42,10 +42,12 @@ export class LoginComponent implements OnInit {
     this.userService.login(user).subscribe(
       (userSecurityModel: ObjectUserSecurityModel) => {
         console.log('user>>', userSecurityModel);
-        localStorage.setItem('token', userSecurityModel.token);
         if (userSecurityModel.token !== undefined) {
+          localStorage.setItem('token', userSecurityModel.token);
           this.router.navigate(['/client']);
         }
+      }, error => {
+        const dialogRef: MatDialogRef<LoginDialogComponent> = this.dialog.open(LoginDialogComponent, {data: {isLogin: true}});
       }
     );
   }
@@ -57,7 +59,7 @@ export class LoginComponent implements OnInit {
     this.userService.register(user).subscribe(
       (userResponse: UserModel) => {
         if (userResponse === null || userResponse === undefined) {
-          const dialogRef: MatDialogRef<LoginDialogComponent> = this.dialog.open(LoginDialogComponent);
+          const dialogRef: MatDialogRef<LoginDialogComponent> = this.dialog.open(LoginDialogComponent, {data: {isLogin: false}});
         } else {
 
         }

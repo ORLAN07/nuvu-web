@@ -1,6 +1,7 @@
 <h1 mat-dialog-title>NUVU</h1>
 <div mat-dialog-content>
-  <p>Lo sentimos el usuario ya existe.</p>
+  <p *ngIf="!dialogData.isLogin">Lo sentimos el usuario ya existe.</p>
+  <p *ngIf="dialogData.isLogin">Este usuario y contraseña no existe.</p>
 </div>
 <div mat-dialog-actions>
   <button mat-button (click)="onClose()" cdkFocusInitial>Ok</button>

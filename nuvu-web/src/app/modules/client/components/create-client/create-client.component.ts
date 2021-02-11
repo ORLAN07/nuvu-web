@@ -1,10 +1,8 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {ClientService} from '../../../../domains/client/services/client.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ClientModel} from '../../../../domains/client/model/client.model';
 import {CardModel} from '../../../../domains/card/model/card.model';
-import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
-import {MatChipInputEvent} from '@angular/material/chips';
 import {CityService} from '../../../../domains/city/service/city.service';
 import {CityModel} from '../../../../domains/city/model/city-model';
 import {CardBrandModel} from '../../../../domains/card/model/card-brand.model';
@@ -13,7 +11,13 @@ import {CardBrandService} from '../../../../domains/card/service/Card-brand.serv
 import {CardLevelService} from '../../../../domains/card/service/card-level.service';
 import {CountryService} from '../../../../domains/country/service/country.service';
 import {CountryModel} from '../../../../domains/country/model/country-model';
-import {MatDialogRef} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import * as moment from 'moment';
+import {formatDate} from '@angular/common';
+
+export interface MatDialogDataClient {
+  client: ClientModel;
+}
 
 @Component({
   selector: 'app-create-client',
@@ -31,7 +35,8 @@ export class CreateClientComponent implements OnInit {
   countries: CountryModel[] = [];
   cardType: string[] = ['Credito', 'Debito'];
 
-  constructor(private clientService: ClientService,
+  constructor(@Inject(MAT_DIALOG_DATA) public dialogData: MatDialogDataClient,
+              private clientService: ClientService,
               private formBuilder: FormBuilder,
               private cityService: CityService,
               private cardBrandService: CardBrandService,
@@ -55,6 +60,7 @@ export class CreateClientComponent implements OnInit {
     {
       brand: [, Validators.required],
       isCredit: [, Validators.required],
+      isCreditDescription: [],
       cardLevel: [, Validators.required],
       dateDue: [, Validators.required],
       securityCode: [, Validators.required],
@@ -65,10 +71,34 @@ export class CreateClientComponent implements OnInit {
   );
 
   ngOnInit(): void {
+    if (this.dialogData.client !== null) {
+      this.chargeClient();
+    }
     this.loadCountry();
     //this.loadCities();
     this.loadCardBrand();
     this.loadCardLevel();
+  }
+
+  chargeClient(): void {
+    console.log('datainput>>', this.dialogData);
+    this.clientFormGroup.get('name1').setValue(this.dialogData.client.name1);
+    this.clientFormGroup.get('name2').setValue(this.dialogData.client.name2);
+    this.clientFormGroup.get('surname1').setValue(this.dialogData.client.surname1);
+    this.clientFormGroup.get('surname2').setValue(this.dialogData.client.surname2);
+    this.clientFormGroup.get('year').setValue(this.dialogData.client.year);
+    this.clientFormGroup.get('phone').setValue(this.dialogData.client.phone);
+    this.clientFormGroup.get('email').setValue(this.dialogData.client.email);
+    this.clientFormGroup.get('city').setValue(this.dialogData.client.city.idCity);
+    this.clientFormGroup.get('country').setValue(this.dialogData.client.city.country.code);
+    this.onSelectChangeCountry(1, this.dialogData.client.city.country.code);
+    this.dialogData.client.cards.forEach((card: CardModel) => {
+      console.log('loadCard>>', card.credit);
+      card.isCreditDescription = card.credit ? 'Credito' : 'Debito';
+      card.country = card.city.country.code;
+      this.cards.push(card);
+    });
+    this.dialogData.client.cards.length > 0 ? this.isAddCard = true : this.isAddCard = false;
   }
 
   loadCountry(): void {
@@ -146,14 +176,13 @@ export class CreateClientComponent implements OnInit {
   }
 
   onCreate(): void {
-    console.log('name1>>', this.clientFormGroup.get('name1'));
     if (this.cardFormGroup.valid) {
       this.add();
     }
     this.clientService.create(this.buildObjectClient()).subscribe(
       (client: ClientModel) => {
         if (client !== null && client !== undefined) {
-          this.dialog.close();
+          this.dialog.close(client);
         }
         console.log('clientCreated>>', client);
       }
@@ -167,23 +196,27 @@ export class CreateClientComponent implements OnInit {
   add(): void {
     this.cards.push(this.buildObjectCard());
     this.cardFormGroup.reset();
-    console.log('cards>>', this.cards);
+  }
+
+  clean(): void {
+    this.cardFormGroup.reset();
   }
 
   buildObjectCard(): CardModel {
     const card: CardModel = new CardModel();
     card.brand = new CardBrandModel();
     card.brand.idCardBrand = this.cardFormGroup.get('brand').value;
-    card.isCredit = this.cardFormGroup.get('isCredit').value === 'Credito' ? true : false;
+    card.credit = this.cardFormGroup.get('isCredit').value === 'Credito' ? true : false;
+    card.isCreditDescription = this.cardFormGroup.get('isCredit').value;
     card.cardLevel = new CardLevelModel();
     card.cardLevel.idCardLevel = this.cardFormGroup.get('cardLevel').value;
     card.dateDue = this.cardFormGroup.get('dateDue').value;
     card.securityCode = this.cardFormGroup.get('securityCode').value;
     const city: CityModel = new CityModel();
     const country: CountryModel = new CountryModel();
-    country.code = this.clientFormGroup.get('country').value;
+    country.code = this.cardFormGroup.get('country').value;
     city.country = country;
-    city.idCity = this.clientFormGroup.get('city').value;
+    city.idCity = this.cardFormGroup.get('city').value;
     card.city = city;
     card.country = this.cardFormGroup.get('country').value;
     card.price = this.cardFormGroup.get('price').value;
@@ -205,7 +238,7 @@ export class CreateClientComponent implements OnInit {
     city.country = country;
     city.idCity = this.clientFormGroup.get('city').value;
     client.city = city;
-    client.cards = this.cards;
+    //client.cards = this.cards;
     return client;
   }
 
@@ -217,20 +250,22 @@ export class CreateClientComponent implements OnInit {
   }
 
   selected(card: CardModel): void {
-    //this.cards.push(event.option.viewValue);
-    console.log('on select>>', card);
+    console.log('card select>>', card);
     this.buildObjectCardToForm(card);
+    this.onSelectChangeCountry(0, card.country);
   }
 
   buildObjectCardToForm(card: CardModel): void {
-    this.cardFormGroup.get('brand').setValue(card.brand);
-    this.cardFormGroup.get('isCredit').setValue(card.isCredit);
-    this.cardFormGroup.get('cardLevel').setValue(card.cardLevel);
-    this.cardFormGroup.get('dateDue').setValue(card.dateDue);
+    this.cardFormGroup.get('brand').setValue(card.brand.idCardBrand);
+    this.cardFormGroup.get('isCredit').setValue(card.isCreditDescription);
+    this.cardFormGroup.get('cardLevel').setValue(card.cardLevel.idCardLevel);
+    this.cardFormGroup.get('dateDue').setValue(formatDate(card.dateDue, 'yyyy-MM-dd', 'en'));
     this.cardFormGroup.get('securityCode').setValue(card.securityCode);
-    this.cardFormGroup.get('city').setValue(card.city);
+    this.cardFormGroup.get('city').setValue(card.city.idCity);
     this.cardFormGroup.get('country').setValue(card.country);
     this.cardFormGroup.get('price').setValue(card.price);
+    this.cardFormGroup.get('isCreditDescription').setValue(card.isCreditDescription);
+    console.log('this>>', this.cardFormGroup);
   }
 
 }

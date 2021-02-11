@@ -19,20 +19,6 @@ export class ClientComponent implements OnInit {
               public matDialog: MatDialog) { }
 
   ngOnInit(): void {
-    const client: ClientModel = new ClientModel();
-    client.idClient = 1;
-    client.name1 = 'Juan';
-    client.name2 = 'camilo';
-    client.surname1 = 'guarnizo';
-    client.surname2 = 'cerrano';
-    client.year = 30;
-    client.phone = '3675436798';
-    client.email = 'juan@nuvu.com';
-    this.clientService.create(client).subscribe(
-      (clientResponse: ClientModel) => {
-        console.log('client created>>', clientResponse);
-      }
-    );
     this.loadClients();
   }
 
@@ -46,7 +32,17 @@ export class ClientComponent implements OnInit {
   }
 
   onCreate(): void {
-    const dialogCreateClient: MatDialogRef<CreateClientComponent> = this.matDialog.open(CreateClientComponent);
+    const dialogCreateClient: MatDialogRef<CreateClientComponent> = this.matDialog.open(CreateClientComponent, { data: {client: null}});
+    dialogCreateClient.afterClosed().subscribe(
+      (clientModule: ClientModel) => {
+        this.clients.push(clientModule);
+      }
+    );
+  }
+
+  onEdit(clientModel: ClientModel): void {
+    console.log('model edit>>', clientModel);
+    const dialogCreateClient: MatDialogRef<CreateClientComponent> = this.matDialog.open(CreateClientComponent, {data: {client: clientModel}});
   }
 
   onDelete(client: ClientModel): void {
